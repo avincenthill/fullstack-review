@@ -10,7 +10,7 @@ class App extends React.Component {
     this.state = {
       repos: []
     }
-
+    console.log("App was loaded")
   }
 
   search(term) {
@@ -27,4 +27,5 @@ class App extends React.Component {
   }
 }
 
+// render app
 ReactDOM.render(<App />, document.getElementById('app'));
