@@ -6,7 +6,7 @@ let repoSchema = mongoose.Schema({
   owner_name: String,
   repo_name: String,
   repo_stars: Number,
-  repo_data: Array,
+  // repo_data: Array,
 });
 
 let Repo = mongoose.model('Repo', repoSchema);
