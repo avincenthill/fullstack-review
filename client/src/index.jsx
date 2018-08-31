@@ -8,13 +8,25 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      repos: []
+      repos: [],
+      serverURL: `http://localhost:1337/repos`
     }
   }
 
   search(term) {
-    console.log(`${term} was searched`);
-    // TODO
+    if (term === '') {
+      term = 'default';
+    };
+    console.log(`${term} was searched by the client`);
+
+    $.ajax({
+      method: 'POST',
+      url: this.state.serverURL,
+      data: { username: term },
+      success: (res) => {
+        console.log(res.msg);
+      }
+    });
   }
 
   render() {
