@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon ./server/index.js",
     "react-dev": "webpack -d --watch",
     "server-dev": "nodemon server/index.js"
   },
@@ -21,6 +22,7 @@
     "express": "^4.15.0",
     "jquery": "^3.1.1",
     "mongoose": "^4.9.6",
+    "nodemon": "^1.18.4",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "request": "^2.81.0"
