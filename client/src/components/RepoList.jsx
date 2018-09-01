@@ -11,6 +11,7 @@ class RepoList extends React.Component {
   }
 
   //TBD learn to render adjacent JSX components
+  //TBD rerender on new state
   render() {
     return (
       <div>
