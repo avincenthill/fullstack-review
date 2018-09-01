@@ -29,11 +29,37 @@ class App extends React.Component {
     });
   }
 
+  //TBD make sorting happen in the database not client
+  sortRepos(repoArray) {
+    const compareRepos = (a, b) => {
+      if (a.repo_stars > b.repo_stars) {
+        return -1;
+      }
+      if (a.repo_stars < b.repo_stars) {
+        return 1;
+      }
+      return 0;
+    }
+
+    return repoArray.sort(compareRepos).slice(0, 25);
+  }
+
+  getAllRepos() {
+    return $.ajax({
+      method: 'GET',
+      url: this.state.serverURL,
+      success: (res) => {
+        return this.setState({ repos: this.sortRepos(res) })
+        console.log(`client got all repos`);
+      }
+    });
+  }
+
   render() {
     return (<div>
       <h1>Github Fetcher</h1>
-      <RepoList repos={this.state.repos} />
       <Search onSearch={this.search.bind(this)} />
+      <RepoList getAllRepos={this.getAllRepos.bind(this)} repos={this.state.repos} />
     </div>)
   }
 }

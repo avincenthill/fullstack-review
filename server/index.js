@@ -65,7 +65,6 @@ app.requestAndSaveGitHubData = (username, token, cb) => {
 
 app.get('/repos', (req, res) => {
   db.getAllRepos((err, data) => {
-    console.log(data);
     res.status(202).send(data);
   });
 });
