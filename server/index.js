@@ -1,8 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const http = require('https');
+const config = require('../config');
+const db = require('../database/index');
 
-let app = express();
+const app = express();
+const port = process.env.PORT || 1337;
 
 app.use(bodyParser());
 
@@ -12,29 +16,65 @@ app.use(express.static(__dirname + '/../client/dist'));
 
 app.post('/repos', (req, res) => {
   let msg = `search username ${req.body.username} received by the server\n`;
-  const { username } = req.body;
-  const gitHubUrl = `https://api.github.com/users/${username}/repos`;
 
-  // TBD take the github username provided (req.body.username) and get the repo information from the github API
-  msg = msg + `\nGitHub API was queried by the server and provided data\n`
+  app.requestAndSaveGitHubData(req.body.username, config.TOKEN, (err, data) => {
+    msg += `\nGitHub API was queried by the server for username ${req.body.username} and provided ${data.length} repos\n`;
 
-  // TBD save the repo information in the database
-  msg = msg + `\ndata was saved to the database by the server\n`
+    //TBD not sure why eslint hates this
+    data.forEach(repoObject => {
+      db.save({
+        // construct object to save to database
+        owner_id: repoObject.owner.id,
+        owner_name: repoObject.owner.login,
+        repo_id: repoObject.id,
+        repo_name: repoObject.name,
+        repo_stars: repoObject.stargazers_count,
+      });
+    });
 
-  let responseData = { msg: msg };
-
-
-  res.status(201).send(responseData);
+    // respond to client
+    let responseData = { msg: msg };
+    res.status(201).send(responseData);
+  });
 });
 
-app.get('/repos', (req, res) => {
-  // TODO - your code here!
-  // This route should send back the top 25 repos
-});
 
-let port = process.env.PORT || 1337;
+app.requestAndSaveGitHubData = (username, token, cb) => {
+  const options = {
+    method: 'GET',
+    hostname: 'api.github.com',
+    port: null,
+    path: `/users/${username}/repos?oauth_token=${token}&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1535752811&oauth_nonce=3xT4c8&oauth_version=1.0&oauth_signature=krK9al3iY%20INh%20lgsluNNuUAsVY%3D`,
+    headers: {
+      'cache-control': 'no-cache',
+      'User-Agent': 'repo-fetcher',
+    },
+  };
+  const req = http.request(options, (res) => {
+    const chunks = [];
+    res.on("data", (chunk) => {
+      chunks.push(chunk);
+    });
+    res.on("end", () => {
+      const body = Buffer.concat(chunks);
+      cb(null, JSON.parse(body.toString()));
+    });
+  });
+  req.end();
+};
+
+// app.get('/repos', (req, res) => {
+//   // TODO - your code here!
+//   // This route should send back the top 25 repos
+//   db.save(
+//     (err, data) => {
+
+//     };
+//   );
+
+// res.status(202).send('server recieved a GET request');
+// });
 
 app.listen(port, () => {
   console.log(`listening on port ${port}...`);
 });
-
