@@ -9,8 +9,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       repos: [],
-      serverURL: `https://avh-fullstack-review.herokuapp.com:${process.env.PORT}/repos`
-      // TBD fix this hardcoded server address
+      serverURL: `/repos`
     }
   }
 
