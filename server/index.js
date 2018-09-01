@@ -16,7 +16,7 @@ app.use(express.static(__dirname + '/../client/dist'));
 app.post('/repos', (req, res) => {
   let msg = `search username ${req.body.username} received by the server\n`;
 
-  app.requestAndSaveGitHubData(req.body.username, config.TOKEN, (err, data) => {
+  app.requestAndSaveGitHubData(req.body.username, process.env.GITHUBTOKEN, (err, data) => {
     if (err) {
       console.log(err);
     } else {
