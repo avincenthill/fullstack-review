@@ -5,9 +5,6 @@ const http = require('https');
 const config = require('../config');
 const db = require('../database/index');
 
-require('dotenv').config();
-
-
 const app = express();
 const port = process.env.PORT || 1337;
 
@@ -54,7 +51,7 @@ app.requestAndSaveGitHubData = (username, token, cb) => {
     method: 'GET',
     hostname: 'api.github.com',
     port: null,
-    path: `/users/${username}/repos?oauth_token=${token}&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1535752811&oauth_nonce=3xT4c8&oauth_version=1.0&oauth_signature=krK9al3iY%20INh%20lgsluNNuUAsVY%3D`,
+    path: `/users/${username}/repos?oauth_token=${process.env.GITHUBTOKEN}&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1535752811&oauth_nonce=3xT4c8&oauth_version=1.0&oauth_signature=krK9al3iY%20INh%20lgsluNNuUAsVY%3D`,
     headers: {
       'cache-control': 'no-cache',
       'User-Agent': 'repo-fetcher',
