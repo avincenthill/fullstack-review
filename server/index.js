@@ -63,17 +63,12 @@ app.requestAndSaveGitHubData = (username, token, cb) => {
   req.end();
 };
 
-// app.get('/repos', (req, res) => {
-//   // TODO - your code here!
-//   // This route should send back the top 25 repos
-//   db.save(
-//     (err, data) => {
-
-//     };
-//   );
-
-// res.status(202).send('server recieved a GET request');
-// });
+app.get('/repos', (req, res) => {
+  db.getAllRepos((err, data) => {
+    console.log(data);
+    res.status(202).send(data);
+  });
+});
 
 app.listen(port, () => {
   console.log(`listening on port ${port}...`);
