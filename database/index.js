@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 const db = {};
-mongoose.connect('mongodb://localhost:27017/fetcher');
+mongoose.connect(process.env.DBURI);
 
 const repoSchema = mongoose.Schema({
   owner_id: Number,
@@ -31,6 +32,7 @@ db.save = (obj) => {
     }
   });
 
+  //TBD refactor with helper methods
   // db.findRepo(obj.repo_id, (null, data) => {
   //   if(data) {
   //     repo.save((err) => {
@@ -44,7 +46,6 @@ db.save = (obj) => {
   //   }
   //   console.log(msg);
   // });
-
 };
 
 db.findRepo = (repoID, cb) => {

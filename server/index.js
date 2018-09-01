@@ -5,6 +5,9 @@ const http = require('https');
 const config = require('../config');
 const db = require('../database/index');
 
+require('dotenv').config();
+
+
 const app = express();
 const port = process.env.PORT || 1337;
 
@@ -18,19 +21,26 @@ app.post('/repos', (req, res) => {
   let msg = `search username ${req.body.username} received by the server\n`;
 
   app.requestAndSaveGitHubData(req.body.username, config.TOKEN, (err, data) => {
-    msg += `\nGitHub API was queried by the server for username ${req.body.username} and provided ${data.length} repos\n`;
-
-    //TBD not sure why eslint hates this
-    data.forEach(repoObject => {
-      db.save({
-        // construct object to save to database
-        owner_id: repoObject.owner.id,
-        owner_name: repoObject.owner.login,
-        repo_id: repoObject.id,
-        repo_name: repoObject.name,
-        repo_stars: repoObject.stargazers_count,
-      });
-    });
+    if (err) {
+      console.log(err);
+    } else {
+      //TBD not sure why eslint hates this
+      if (data.length > 0) {
+        msg += `\nGitHub API was queried by the server for username ${req.body.username} and provided ${data.length} repos\n`;
+        data.forEach(repoObject => {
+          db.save({
+            // construct object to save to database
+            owner_id: repoObject.owner.id,
+            owner_name: repoObject.owner.login,
+            repo_id: repoObject.id,
+            repo_name: repoObject.name,
+            repo_stars: repoObject.stargazers_count,
+          });
+        });
+      } else {
+        msg += `\nGitHub API was queried by the server for username ${req.body.username} and provided no repos\n`;
+      }
+    }
 
     // respond to client
     let responseData = { msg: msg };
